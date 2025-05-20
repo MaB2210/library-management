@@ -14,14 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class BookServiceImpl implements BookService{
-    @Autowired
-    BookRepository bookRepository;
 
-    @Autowired
-    AuthorService authorService;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+
+    public BookServiceImpl(BookRepository bookRepository,AuthorRepository authorRepository){
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+    }
 
 
     @Override
@@ -37,7 +38,7 @@ public class BookServiceImpl implements BookService{
     @Override
     @Transactional
     public Book create(Book book, Long  authorId) {
-        Author existing = authorService.findById(authorId);
+        Author existing = authorRepository.findById(authorId).orElseThrow(()-> new ResourceNotFoundException("author","id",authorId));
         book.setAuthor(existing);
         return bookRepository.save(book);
     }

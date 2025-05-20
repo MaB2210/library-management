@@ -4,6 +4,7 @@ import com.example.library.library_api.exception.ResourceNotFoundException;
 import com.example.library.library_api.model.Book;
 import com.example.library.library_api.model.BookDetail;
 import com.example.library.library_api.repository.BookDetailRepository;
+import com.example.library.library_api.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,13 +13,14 @@ import java.util.List;
 
 @Service
 public class BookDetailServiceImpl implements BookDetailService {
+    private final BookDetailRepository bookDetailRepository;
+    private final BookRepository bookRepository;
 
-    @Autowired
-    BookDetailRepository bookDetailRepository;
-
-    @Autowired
-    BookService bookService;
-
+    public BookDetailServiceImpl(BookDetailRepository bookDetailRepository,
+                                 BookRepository bookRepository) {
+        this.bookDetailRepository = bookDetailRepository;
+        this.bookRepository   = bookRepository;
+    }
 
     @Override
     public List<BookDetail> findAll() {
@@ -33,7 +35,7 @@ public class BookDetailServiceImpl implements BookDetailService {
     @Override
     @Transactional
     public BookDetail create(BookDetail bookDetail, Long bookId) {
-        Book book = bookService.findById(bookId);
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new ResourceNotFoundException("book","id",bookId));
         bookDetail.setBook(book);
         return bookDetailRepository.save(bookDetail);
     }

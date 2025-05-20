@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
-    @Autowired
-    AuthorRepository authorRepository;
+
+    private final AuthorRepository authorRepository;
+
+    public AuthorServiceImpl(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
 
     @Override
     public List<Author> findAll() {
